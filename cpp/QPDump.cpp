@@ -504,7 +504,7 @@ public:
             exit(0);
         }
 
-        auto line = lines[0];
+        auto &line = lines[0];
         auto pcie_start = line.find_first_of('/') + 1;
         auto vport_start = line.find_first_of('/', pcie_start) + 1;
 
@@ -528,8 +528,8 @@ public:
         for (auto &line : lines) {
             auto elems = Utils::split(line);
             if (elems.size() >= 5 and elems[4].find(iface) != string::npos) {
-                mst_dev = elems[2];
-                rdma_dev = elems[3];
+                mst_dev.swap(elems[2]);
+                rdma_dev.swap(elems[3]);
                 break;
             }
         }
@@ -579,10 +579,10 @@ public:
         };
 
         vector<uint8_t> seg_bytes;
-        for (auto line : lines) {
+        for (auto &line : lines) {
             auto qp_dump = QPDump();
             // VERBOSE << line;
-            for (auto hex_word : Utils::split(line)) {
+            for (auto &&hex_word : Utils::split(line)) {
                 // auto v = VERBOSE << hex_word;
                 for (auto b : Utils::hex_word_to_bytes(hex_word)) {
                     // v << hex << (int)b << dec;
@@ -631,7 +631,7 @@ public:
             }
             line = Utils::strip(line);
             if (!line.empty() and is_seg) {
-                for (auto hex_word : Utils::split(line)) {
+                for (auto &&hex_word : Utils::split(line)) {
                     for (auto b : Utils::hex_word_to_bytes(hex_word)) {
                         seg_bytes.emplace_back(b);
                     }
