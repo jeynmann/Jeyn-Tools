@@ -353,7 +353,7 @@ class QP:
         elif self.ip_ver == IpVer.IPV6:
             sip_str = IpVer.ipv6_str(self.sip)
             dip_str = IpVer.ipv6_str(self.dip)
-        return f"qp {self.qpi} lqpn {self.sqpn} rqpn {self.rqpn} type {sw_st_str} state {qp_state_str} sq-psn {self.next_send_psn} pd {self.pd} ip {ip_ver_str} src {sip_str}:{self.udp_sport} dst {dip_str}:{self.udp_dport} "
+        return f"qp {self.qpi} lqpn {self.sqpn} rqpn {self.rqpn} type {sw_st_str} state {qp_state_str} sq-psn {self.next_send_psn} pd {self.pd} ip {ip_ver_str} sip {sip_str} dip {dip_str} sport {self.udp_sport} dport {self.udp_dport} "
 
 
 class QPDump:

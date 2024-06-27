@@ -456,8 +456,8 @@ public:
         }
         stringstream ss;
         ss << " qp " << qpi << " lqpn " << sqpn << " rqpn " << rqpn << " type " << sw_st_str << " state " << qp_state_str
-           << " sq-psn " << next_send_psn << " pd " << pd << " ip " << ip_ver_str << " src " << sip_str << ":" << udp_sport
-           << " dst " << dip_str << ":" << udp_dport;
+           << " sq-psn " << next_send_psn << " pd " << pd << " ip " << ip_ver_str << " sip " << sip_str << " dip " << dip_str
+           << " sport " << udp_sport << " dport " << udp_dport;
         return ss.str();
     }
 
