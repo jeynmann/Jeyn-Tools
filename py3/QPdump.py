@@ -371,6 +371,8 @@ class QPDump:
         # e.g. pci/0000:03:00.0/196609
         with os.popen(vport_cmd) as f:
             lines = f.readlines()
+            if not lines:
+                exit(0)
             line = lines[0]
             pcie_start = line.find('/') + 1
             vport_start = line.find('/', pcie_start) + 1
