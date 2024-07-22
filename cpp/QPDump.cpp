@@ -674,7 +674,7 @@ int main(int argc, char *argv[]) {
 
         switch (c) {
             case 'p':
-                vport = stoi(optarg);
+                vport = stoi(optarg) & 0xffff;
                 break;
             case 'i':
                 iface = string(optarg);

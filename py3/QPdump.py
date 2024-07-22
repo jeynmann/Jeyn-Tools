@@ -5,35 +5,38 @@
 '''
 ADB:
 
-<node name="qp_info" size="0x100.0" segment_id="0x1530" >
+<node name="qp_info" size="0x38.0" segment_id="0x1530" >
   <field name="pd"            offset="0x0.0"     size=".24"    descr="Protection Domain\;Reserved when st==REG_UMR."/>
-  <field name="sw_st"         offset="0x0.24"    size=".8"     descr="Transport service type" enum="RC=0x0,UC=0x1,UD=0x2,XRC=0x3,IBL2=0x4,DCI=0x5,QP0=0x7,QP1=0x8,Raw_datagram=0x9,REG_UMR=0xc,DC_CNON_IPK=0x10"/>
+  <field name="sw_st"         offset="0x0.24"    size=".8"     descr="Transport service type" enum="RC=0x0,UC=0x1,UD=0x2,XRC=0x3,IBL2=0x4,DCI=0x5,QP0=0x7,QP1=0x8,Raw_datagram=0x9,REG_UMR=0xc,DC_CNAK=0x10"/>
   <field name="sqpn"          offset="0x4.0"     size=".24"    descr=""/>
   <field name="ip_protocol"   offset="0x4.24"    size=".8"     descr="IPv4 protocol/IPv6 Next Header (Last in case of extensions exist)" />
-  <field name="sip"           offset="0x8.0"     size="0x10.0" descr="" union_selector="$(parent).roce_ver" subnode="ipv4_or_ipv6_layout"/>
-  <field name="dip"           offset="0x18.0"    size="0x10.0" descr="" union_selector="$(parent).roce_ver" subnode="ipv4_or_ipv6_layout"/>
-  <field name="udp_sport"     offset="0x28.0"    size=".16"    descr="For InfiniBand: Remote (Destination) LID;For R-RoCE v2.0: UDP source port which must belong to the ;range: [QUERY_HCA_CAP. r_roce_udp_src_port_range_min-;QUERY_HCA_CAP. r_roce_udp_src_port_range_max];For RoCE v1.0 and v1.5 this field is reserved."/>
+  <field name="sip"           offset="0x8.0"     size="0x10.0" descr="" union_selector="$(parent).ip_ver" subnode="ipv4_or_ipv6_layout"/>
+  <field name="dip"           offset="0x18.0"    size="0x10.0" descr="" union_selector="$(parent).ip_ver" subnode="ipv4_or_ipv6_layout"/>
+  <field name="udp_sport"     offset="0x28.0"    size=".16"    descr="For R-RoCE v2.0: UDP source port which must belong to the ;range: [QUERY_HCA_CAP. r_roce_udp_src_port_range_min-;QUERY_HCA_CAP. r_roce_udp_src_port_range_max];For RoCE v1.0 and v1.5 this field is reserved."/>
   <field name="udp_dport"     offset="0x28.16"   size=".16"    descr="" />
   <field name="rqpn"          offset="0x2c.0"    size=".24"    descr="For connected transport services, indicates the Remote QP number."/>
-  <field name="next_send_psn" offset="0x34.0"    size=".24"    descr="Next PSN to be sent"/>
-  <field name="qp_state"      offset="0x34.24"    size=".4"    descr="QP State \;0x0: RST\;0x1: INIT\;0x2: RTR\;0x3: RTS\;0x4: SQEr\;0x5: SQDRAINED - Send Queue Drained\;0x6: ERR\;0x9: Suspended" enum="RST=0x0,INIT=0x1,RTR=0x2,RTS=0x3,SQEr=0x4,SQDRAINED=0x5,ERR=0x6,Suspended=0x9"/>
-  <field name="roce_ver"     offset="0x34.28"    size=".3"    descr="" enum="ROCE_VER_GRH=0x0,ROCE_VER_IPV4=0x1,ROCE_VER_IPV6=0x2,ROCE_VER_IPV4_UDP=0x3,ROCE_VER_IPV6_UDP=0x4" />
-  <field name="ip_ver" offset="0x34.31"    size=".1"    descr="When set, the writing of data into local memory is guaranteed to be in-order for packets belonging to the same WQE"/>
+  <field name="data_in_order" offset="0x2c.24"   size=".1"     descr="When set, the writing of data into local memory is guaranteed to be in-order for packets belonging to the same WQE"/>
+  <field name="next_send_psn" offset="0x30.0"    size=".24"    descr="Next PSN to be sent"/>
+  <field name="qp_state"      offset="0x30.24"   size=".4"     descr="QP State \;0x0: RST\;0x1: INIT\;0x2: RTR\;0x3: RTS\;0x4: SQEr\;0x5: SQDRAINED - Send Queue Drained\;0x6: ERR\;0x9: Suspended" enum="RST=0x0,INIT=0x1,RTR=0x2,RTS=0x3,SQEr=0x4,SQDRAINED=0x5,ERR=0x6,Suspended=0x9"/>
+  <field name="ip_ver"        offset="0x30.28"   size=".4"     descr="0x0: Ipv4\;0x1: Ipv6\;For RoCE version 1, i.e. roce_ver=0, this field is reserved." enum="Ipv4=0x0,Ipv6=0x1" />
+  <field name="roce_ver"      offset="0x34.0"    size=".8"     descr="0x0: version_1_0 - RoCE version 1.0\;0x1: version_1_5 - RoCE version 1.5\;0x2: version_2_0 - RoCE version 2.0" enum="version_1_0=0x0,version_1_5=0x1,version_2_0=0x2" />
 </node>
 
 Sample:
 -------------------------------------------
 Segment Type: 0x1530
-Segment Size: 56 Bytes
+Segment Size: 72 Bytes
 Segment Data:
          4          8         12         16
-0x000E1530 0x00000000 0x0000FFFF 0x00000000
-        20         24         28         32 
-0xFFC00000 0x0300005A 0x00000000 0x00000000
-        36         40         44         48 
-0x00000000 0x0101E602 0x00000000 0x00000000
-        36         40
-0x00000000 0x0101E602
+0x00121530 0x00000000 0x00000001 0x00000000
+        20         24         28         32
+0x00000016 0x11000190 0x00000000 0x00000000
+        36         40         44         48
+0x00000000 0x0D141401 0x00000000 0x00000000
+        52         56         60         64
+0x00000000 0x0D141401 0x12B7F299 0x01000191
+        68         72
+0x02000000 0x00000002
 -------------------------------------------
                     Segment - qp_connection_info (0x1530) ; index1 = 0xffff, index2 = 0x0
 sw_st = 0x0
@@ -425,7 +428,7 @@ class QPDump:
         Verbose.print(f"{dump_cmd}")
         with os.popen(dump_cmd) as f:
             lines = f.readlines()
-            qp = QP()
+            qp = None
             for line in lines:
                 line = line.strip()
                 if not line:
@@ -433,8 +436,12 @@ class QPDump:
                 if "qp_info (0x1530)" in line:
                     qp = QP()
                     continue
+                if not qp:
+                    continue
                 if "--------" in line:
-                    dump_qps.setdefault(qp.qpi, qp) if qp.qpi else None
+                    if qp.qpi:
+                        dump_qps.setdefault(qp.qpi, qp)
+                    qp = None
                     continue
                 if '=' in line:
                     eq_pos = line.find('=')
@@ -485,14 +492,14 @@ class QPDump:
 if __name__ == "__main__":
     t1 = time.time()
     parser = argparse.ArgumentParser(description='resourcedump output parser')
-    parser.add_argument('-p', '--vport', type=str, default='0x0',
-                        help='virtual hcaid. Get by `devlink show port`. e.g. vport is 65535 for device "pci/0000:98:00.0/65535"')
+    parser.add_argument('-p', '--vport', type=str, default='0',
+                        help=argparse.SUPPRESS)
     parser.add_argument('-i', '--interface', type=str, default='',
                         help='linux interface name. e.g. pf0hpf')
     parser.add_argument('-d', '--device', type=str, default='mlx5_0',
-                        help='rdma device name. e.g. mlx5_0')
+                        help=argparse.SUPPRESS)
     parser.add_argument('-a', '--adb', type=str, default='',
-                        help='use adb parser.')
+                        help=argparse.SUPPRESS)
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='print verbose log.')
     args = parser.parse_args()
@@ -509,7 +516,7 @@ if __name__ == "__main__":
             mst_dev = "/dev/mst/mt41692_pciconf0"
         else:
             mst_dev = "/dev/mst/mt41692_pciconf0.1"
-        vport = args.vport
+        vport = int(args.vport) & 0xffff
     adb = args.adb
     # Verbose.print(f"parse cost {time.time() -t1}")
 
