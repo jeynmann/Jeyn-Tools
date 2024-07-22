@@ -431,19 +431,21 @@ class QPDump:
         with os.popen(dump_cmd) as f:
             lines = f.readlines()
             qp = None
+            is_qp = False
             for line in lines:
                 line = line.strip()
                 if not line:
                     continue
                 if "qp_info (0x1530)" in line:
                     qp = QP()
+                    is_qp = True
                     continue
-                if not qp:
+                if not is_qp:
                     continue
                 if "--------" in line:
                     if qp.qpi:
                         dump_qps.setdefault(qp.qpi, qp)
-                    qp = None
+                    is_qp = False
                     continue
                 if '=' in line:
                     eq_pos = line.find('=')
